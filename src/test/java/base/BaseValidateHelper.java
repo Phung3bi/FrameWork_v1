@@ -1,5 +1,6 @@
 package base;
 
+import Until.captureHelpers;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -11,6 +12,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+import org.testng.ITestResult;
 
 
 import javax.lang.model.element.Element;
@@ -222,7 +224,20 @@ import java.util.List;
         return false;
     }
 
-    //
+    //screenSHOT PASS/FAILED
+    public void takeScreenshot(ITestResult result) throws InterruptedException {
+        Thread.sleep(1000);
+        //Khởi tạo đối tượng result thuộc ITestResult để lấy trạng thái và tên của từng Test Case
+        //Ở đây sẽ so sánh điều kiện nếu testcase passed hoặc failed
+        //passed = SUCCESS và failed = FAILURE
+        if (ITestResult.FAILURE == result.getStatus()) {
+            try {
+                captureHelpers.captureScreenshot(driver, result.getName());
+            } catch (Exception e) {
+                System.out.println("Exception while taking screenshot " + e.getMessage());
+            }
+        }
+    }
 
 
 }

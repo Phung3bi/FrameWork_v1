@@ -1,8 +1,11 @@
 package base;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.opera.OperaDriver;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -11,24 +14,91 @@ import java.util.concurrent.TimeUnit;
 
 public class BaseSetup {
     private WebDriver driver;
-
     static String driverPath = "resources\\drivers\\";
+    private String url = "https://localhost";
 
     // lấy driver
     public WebDriver getDriver() {
         return driver;
     }
+    public String getUrl() {
+        return url;
+    }
     // nạp vào
     //Hàm này để tùy chọn Browser. Cho chạy trước khi gọi class này (BeforeClass)
-    private void setDriver(String browserType, String appURL) {
-        if ("chrome".equals(browserType)) {
-            driver = initChromeDriver(appURL);
-        } else if ("firefox".equals(browserType)) {
-            driver = initFirefoxDriver(appURL);
-        } else {
-            System.out.println("Browser: " + browserType + " is invalid, Launching Chrome as browser of choice...");
-            driver = initChromeDriver(appURL);
+//    private WebDriver setDriver(String browserTyp {
+//        if ("chrome".equals(browserType)) {
+//            driver = initChromeDriver(appURL);
+//            driver.navigate().to(appURL);
+//        } else if ("firefox".equals(browserType)) {
+//            driver = initFirefoxDriver(appURL);
+//            driver.navigate().to(appURL);
+//        } else {
+//            System.out.println("Browser: " + browserType + " is invalid, Launching Chrome as browser of choice...");
+//            driver = initChromeDriver(appURL);
+//
+//        }
+//        return driver;
+//    }
+    public WebDriver setupDriver(String browserType) {
+        switch (browserType.trim().toLowerCase()) {
+            case "chrome":
+                driver = initChromeDriver();
+                break;
+            case "firefox":
+                driver = initFirefoxDriver();
+                break;
+            case "opera":
+                driver = initOperaDriver();
+                break;
+            case "edge":
+                driver = initEdgeDriver();
+                break;
+            default:
+                System.out.println("Browser: " + browserType + " is invalid, Launching Chrome as browser of choice...");
+                driver = initChromeDriver();
         }
+        return driver;
+    }
+
+    private WebDriver initChromeDriver() {
+        System.out.println("Launching Chrome browser...");
+        WebDriverManager.chromedriver().setup();
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        return driver;
+    }
+
+    private WebDriver initEdgeDriver() {
+        System.out.println("Launching Edge browser...");
+        WebDriverManager.edgedriver().setup();
+        driver = new EdgeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        return driver;
+    }
+
+    private WebDriver initFirefoxDriver() {
+        System.out.println("Launching Firefox browser...");
+        WebDriverManager.firefoxdriver().setup();
+        driver = new FirefoxDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+        return driver;
+    }
+
+    private WebDriver initOperaDriver() {
+        System.out.println("Launching Opera browser...");
+        WebDriverManager.operadriver().setup();
+        driver = new OperaDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+        return driver;
     }
 //// step new
 //    public static void main(String[] args) {
@@ -42,29 +112,7 @@ public class BaseSetup {
 //        driver.quit();
 
 
-    //Khởi tạo cấu hình của các Browser để đưa vào Switch Case
 
-    private static WebDriver initChromeDriver(String appURL) {
-        System.out.println("Launching Chrome browser...");
-        System.setProperty("webdriver.chrome.driver", driverPath + "chromedriver.exe");
-        WebDriver driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.navigate().to(appURL);
-        driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
-        driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
-        return driver;
-    }
-
-    private static WebDriver initFirefoxDriver(String appURL) {
-        System.out.println("Launching Firefox browser...");
-        System.setProperty("webdriver.gecko.driver", driverPath + "geckodriver.exe");
-        WebDriver driver = new FirefoxDriver();
-        driver.manage().window().maximize();
-        driver.navigate().to(appURL);
-        driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
-        driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
-        return driver;
-    }
 
     // Chạy hàm initializeTestBaseSetup trước hết khi class này được gọi
     @Parameters({ "browserType", "appURL" })
@@ -72,7 +120,7 @@ public class BaseSetup {
     public void initializeTestBaseSetup(String browserType, String appURL) {
         try {
             // Khởi tạo driver và browser
-            setDriver(browserType, appURL);
+            setupDriver(browserType);
         } catch (Exception e) {
             System.out.println("Error..." + e.getStackTrace());
         }
