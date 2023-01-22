@@ -1,4 +1,6 @@
 package Until;
+
+import Until.PropertiesFile;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -10,7 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Properties;
 
 import org.monte.media.Format;
 import org.monte.media.FormatKeys.MediaType;
@@ -56,7 +57,7 @@ public class captureHelpers extends ScreenRecorder{
 
         //Hàm xây dựng
         public captureHelpers(GraphicsConfiguration cfg, Rectangle captureArea, Format fileFormat, Format screenFormat,
-                           Format mouseFormat, Format audioFormat, File movieFolder, String name) throws IOException, AWTException {
+                              Format mouseFormat, Format audioFormat, File movieFolder, String name) throws IOException, AWTException {
             super(cfg, captureArea, fileFormat, screenFormat, mouseFormat, audioFormat, movieFolder);
             this.name = name;
         }
