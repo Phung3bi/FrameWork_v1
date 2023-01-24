@@ -13,12 +13,12 @@ import org.testng.annotations.Parameters;
 import java.util.concurrent.TimeUnit;
 
 public class BaseSetup {
-    private WebDriver driver;
+    private static WebDriver driver;
     static String driverPath = "resources\\drivers\\";
     private String url = "https://localhost";
 
     // lấy driver
-    public WebDriver getDriver() {
+    public static WebDriver getDriver() {
         return driver;
     }
     public String getUrl() {
